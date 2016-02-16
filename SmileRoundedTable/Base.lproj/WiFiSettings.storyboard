@@ -8,7 +8,7 @@
         <!--Printer-->
         <scene sceneID="ieJ-SN-xeJ">
             <objects>
-                <tableViewController id="gP4-ES-9bb" sceneMemberID="viewController">
+                <tableViewController id="gP4-ES-9bb" customClass="WiFiSettingsTableVC" customModule="SmileRoundedTable" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="3Qt-a3-TUx">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

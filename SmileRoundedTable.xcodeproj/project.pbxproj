@@ -18,6 +18,7 @@
 		B7A256C71C736EAE002C56C3 /* SettingsSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256C51C736EAE002C56C3 /* SettingsSplitViewController.swift */; };
 		B7A256C91C736F47002C56C3 /* BluetoothSettings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7A256C81C736F47002C56C3 /* BluetoothSettings.storyboard */; };
 		B7A256CE1C737191002C56C3 /* RoundedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256CD1C737191002C56C3 /* RoundedTableViewCell.swift */; };
+		B7A256D01C7373F1002C56C3 /* WiFiSettingsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256CF1C7373F1002C56C3 /* WiFiSettingsTableVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		B7A256C51C736EAE002C56C3 /* SettingsSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsSplitViewController.swift; sourceTree = "<group>"; };
 		B7A256C81C736F47002C56C3 /* BluetoothSettings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = BluetoothSettings.storyboard; sourceTree = "<group>"; };
 		B7A256CD1C737191002C56C3 /* RoundedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedTableViewCell.swift; sourceTree = "<group>"; };
+		B7A256CF1C7373F1002C56C3 /* WiFiSettingsTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WiFiSettingsTableVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				B7A256C41C736EAE002C56C3 /* SettingsMasterViewController.swift */,
+				B7A256CF1C7373F1002C56C3 /* WiFiSettingsTableVC.swift */,
 				B7A256C51C736EAE002C56C3 /* SettingsSplitViewController.swift */,
 			);
 			name = VC;
@@ -296,6 +299,7 @@
 			files = (
 				B7A256951C736D4B002C56C3 /* AppDelegate.swift in Sources */,
 				B7A256CE1C737191002C56C3 /* RoundedTableViewCell.swift in Sources */,
+				B7A256D01C7373F1002C56C3 /* WiFiSettingsTableVC.swift in Sources */,
 				B7A256C61C736EAE002C56C3 /* SettingsMasterViewController.swift in Sources */,
 				B7A256C71C736EAE002C56C3 /* SettingsSplitViewController.swift in Sources */,
 			);
@@ -524,6 +528,7 @@
 				B7A256BB1C736D4C002C56C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B7A256BC1C736D4C002C56C3 /* Build configuration list for PBXNativeTarget "SmileRoundedTableTests" */ = {
 			isa = XCConfigurationList;
@@ -532,6 +537,7 @@
 				B7A256BE1C736D4C002C56C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B7A256BF1C736D4C002C56C3 /* Build configuration list for PBXNativeTarget "SmileRoundedTableUITests" */ = {
 			isa = XCConfigurationList;
@@ -540,6 +546,7 @@
 				B7A256C11C736D4C002C56C3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
