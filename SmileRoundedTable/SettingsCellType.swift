@@ -1,8 +1,7 @@
 //
 //  SettingsCellType.swift
-//  SmileRoundedTable
 //
-//  Created by yuchen liu on 2/20/16.
+//  Created by rain on 2/20/16.
 //  Copyright © 2016 rain. All rights reserved.
 //
 

@@ -37,7 +37,6 @@ class WiFiSettingsTableVC: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let type = dataSource[indexPath.section][indexPath.row]
-        print("why -> \(type.identity)")
         let cell = tableView.dequeueReusableCellWithIdentifier(type.identity, forIndexPath: indexPath)
         switch type {
         case .RightDetailWithDisclosureCell(let text, let detailText):
@@ -47,6 +46,7 @@ class WiFiSettingsTableVC: UITableViewController {
             cell.textLabel?.text = text
         case .SwitchCell(let text):
             cell.textLabel?.text = text
+            cell.selectionStyle = .None
         }
         return cell
     }

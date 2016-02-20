@@ -30,7 +30,11 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     override public var frame: CGRect {
         didSet(newFrame){
             super.frame.origin.x += margin
-            super.frame.size.width -= 2 * margin
+            if let tableview = getTableview() {
+                if tableview.frame.width == super.frame.size.width {
+                    super.frame.size.width -= 2 * margin
+                }
+            }
         }
     }
 
