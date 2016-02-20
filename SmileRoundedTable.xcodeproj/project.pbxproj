@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B74C88D51C77F07C0011A9A7 /* WiFiTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74C88D41C77F07C0011A9A7 /* WiFiTableVC.swift */; };
 		B7A256951C736D4B002C56C3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256941C736D4B002C56C3 /* AppDelegate.swift */; };
 		B7A2569A1C736D4B002C56C3 /* WiFiSettings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7A256981C736D4B002C56C3 /* WiFiSettings.storyboard */; };
 		B7A2569C1C736D4B002C56C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7A2569B1C736D4B002C56C3 /* Assets.xcassets */; };
@@ -17,8 +18,9 @@
 		B7A256C61C736EAE002C56C3 /* SettingsMasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256C41C736EAE002C56C3 /* SettingsMasterViewController.swift */; };
 		B7A256C71C736EAE002C56C3 /* SettingsSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256C51C736EAE002C56C3 /* SettingsSplitViewController.swift */; };
 		B7A256C91C736F47002C56C3 /* BluetoothSettings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B7A256C81C736F47002C56C3 /* BluetoothSettings.storyboard */; };
-		B7A256CE1C737191002C56C3 /* RoundedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256CD1C737191002C56C3 /* RoundedTableViewCell.swift */; };
+		B7A256CE1C737191002C56C3 /* SmileRoundedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256CD1C737191002C56C3 /* SmileRoundedTableViewCell.swift */; };
 		B7A256D01C7373F1002C56C3 /* WiFiSettingsTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A256CF1C7373F1002C56C3 /* WiFiSettingsTableVC.swift */; };
+		B7A9FE691C7817040010FF24 /* SettingsCellType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A9FE681C7817040010FF24 /* SettingsCellType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B74C88D41C77F07C0011A9A7 /* WiFiTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WiFiTableVC.swift; sourceTree = "<group>"; };
 		B7A256911C736D4B002C56C3 /* SmileRoundedTable.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmileRoundedTable.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7A256941C736D4B002C56C3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B7A256991C736D4B002C56C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/WiFiSettings.storyboard; sourceTree = "<group>"; };
@@ -55,8 +58,10 @@
 		B7A256C41C736EAE002C56C3 /* SettingsMasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsMasterViewController.swift; sourceTree = "<group>"; };
 		B7A256C51C736EAE002C56C3 /* SettingsSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsSplitViewController.swift; sourceTree = "<group>"; };
 		B7A256C81C736F47002C56C3 /* BluetoothSettings.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = BluetoothSettings.storyboard; sourceTree = "<group>"; };
-		B7A256CD1C737191002C56C3 /* RoundedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedTableViewCell.swift; sourceTree = "<group>"; };
+		B7A256CD1C737191002C56C3 /* SmileRoundedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmileRoundedTableViewCell.swift; sourceTree = "<group>"; };
 		B7A256CF1C7373F1002C56C3 /* WiFiSettingsTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WiFiSettingsTableVC.swift; sourceTree = "<group>"; };
+		B7A9FE671C780E410010FF24 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
+		B7A9FE681C7817040010FF24 /* SettingsCellType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsCellType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				B7A256941C736D4B002C56C3 /* AppDelegate.swift */,
+				B7A9FE661C780E310010FF24 /* Playground */,
 				B7A256CC1C737178002C56C3 /* RoundedTableViewCell */,
 				B7A256CB1C73716B002C56C3 /* VC */,
 				B7A256CA1C737161002C56C3 /* UI */,
@@ -151,6 +157,8 @@
 			children = (
 				B7A256C41C736EAE002C56C3 /* SettingsMasterViewController.swift */,
 				B7A256CF1C7373F1002C56C3 /* WiFiSettingsTableVC.swift */,
+				B7A9FE681C7817040010FF24 /* SettingsCellType.swift */,
+				B74C88D41C77F07C0011A9A7 /* WiFiTableVC.swift */,
 				B7A256C51C736EAE002C56C3 /* SettingsSplitViewController.swift */,
 			);
 			name = VC;
@@ -159,9 +167,17 @@
 		B7A256CC1C737178002C56C3 /* RoundedTableViewCell */ = {
 			isa = PBXGroup;
 			children = (
-				B7A256CD1C737191002C56C3 /* RoundedTableViewCell.swift */,
+				B7A256CD1C737191002C56C3 /* SmileRoundedTableViewCell.swift */,
 			);
 			name = RoundedTableViewCell;
+			sourceTree = "<group>";
+		};
+		B7A9FE661C780E310010FF24 /* Playground */ = {
+			isa = PBXGroup;
+			children = (
+				B7A9FE671C780E410010FF24 /* MyPlayground.playground */,
+			);
+			name = Playground;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,9 +314,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7A256951C736D4B002C56C3 /* AppDelegate.swift in Sources */,
-				B7A256CE1C737191002C56C3 /* RoundedTableViewCell.swift in Sources */,
+				B7A256CE1C737191002C56C3 /* SmileRoundedTableViewCell.swift in Sources */,
 				B7A256D01C7373F1002C56C3 /* WiFiSettingsTableVC.swift in Sources */,
 				B7A256C61C736EAE002C56C3 /* SettingsMasterViewController.swift in Sources */,
+				B74C88D51C77F07C0011A9A7 /* WiFiTableVC.swift in Sources */,
+				B7A9FE691C7817040010FF24 /* SettingsCellType.swift in Sources */,
 				B7A256C71C736EAE002C56C3 /* SettingsSplitViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

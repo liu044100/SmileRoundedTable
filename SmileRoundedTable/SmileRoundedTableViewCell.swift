@@ -7,13 +7,13 @@
 
 import UIKit
 
-@IBDesignable public class SmileRoundedTableViewCell: UITableViewCell {
+public class SmileRoundedTableViewCell: UITableViewCell {
 
     //MARK: Property - IBInspectable
-    @IBInspectable public var cornerRadius: CGFloat = 6
-    @IBInspectable public var margin: CGFloat = 28
-    @IBInspectable public var frontColor: UIColor = UIColor.whiteColor()
-    @IBInspectable public var separatorLeftInset: CGFloat = 20
+    public var cornerRadius: CGFloat = 6
+    public var margin: CGFloat = 28
+    public var frontColor: UIColor = UIColor.whiteColor()
+    public var separatorLeftInset: CGFloat = 20
     
     //MARK: Property
     let shapeLayer = CAShapeLayer()
@@ -31,6 +31,12 @@ import UIKit
         didSet(newFrame){
             super.frame.origin.x += margin
             super.frame.size.width -= 2 * margin
+        }
+    }
+
+    public override func didMoveToSuperview() {
+        if let tableview = getTableview() {
+            tableview.separatorStyle = .None
         }
     }
     
@@ -72,9 +78,9 @@ import UIKit
         self.layer.mask = shapeLayer
         
         if (addLine == true) {
-            let lineHeight: CGFloat = (0.5 / UIScreen.mainScreen().scale)
+            let lineHeight: CGFloat = (0.5)
             lineLayer.frame = CGRectMake(separatorLineInset.left, lineHeight, bounds.size.width - separatorLineInset.left - separatorLineInset.right - Margin, -lineHeight)
-            lineLayer.backgroundColor = UIColor(red: 221/255.0, green: 221/255.0, blue: 221/255.0, alpha: 1).CGColor
+            lineLayer.backgroundColor = UIColor(red: 206/255.0, green: 206/255.0, blue: 210/255.0, alpha: 1).CGColor
             self.layer.addSublayer(lineLayer)
         } else {
             lineLayer.removeFromSuperlayer()
