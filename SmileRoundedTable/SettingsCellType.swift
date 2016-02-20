@@ -12,7 +12,7 @@ public enum SettingsCellType: CustomStringConvertible {
     case ButtonCell(text: String)
     case SwitchCell(text: String)
     
-    public var identity: String {
+    public var identifier: String {
         let cellID: String
         switch self {
         case .RightDetailWithDisclosureCell(_, _):
