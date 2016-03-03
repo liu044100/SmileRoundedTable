@@ -10,7 +10,8 @@ import UIKit
 
 class WiFiTableVC: UITableViewController {
     //MARK: Property
-    var dataSource = [1, 2, 3, 4]
+    var dataSource = [Int](2..<50
+    )
     
     //MARK: Life Cycle
     override func viewDidLoad() {

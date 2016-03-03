@@ -37,3 +37,18 @@ public enum SettingsCellType: CustomStringConvertible {
 
 let cell = SettingsCellType.RightDetailWithDisclosureCell(text: "Printer", detailText: "None")
 let name = "\(cell)"
+
+public protocol SettingsList: CustomStringConvertible {}
+
+extension String: SettingsList {
+    public var description: String {
+        return self
+    }
+}
+
+func showgo() -> [SettingsList] {
+    return ["go", "gogo"]
+}
+
+let a: [SettingsList] = showgo()
+

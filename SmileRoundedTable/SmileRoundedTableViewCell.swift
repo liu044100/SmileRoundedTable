@@ -7,6 +7,33 @@
 
 import UIKit
 
+struct ConstraintHelper {
+    static func addEqualConstraintsFromView(view: UIView, toView: UIView) {
+        let topConstraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor)
+        let bottomConstraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
+        let leftConstraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        let rightConstraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
+        NSLayoutConstraint.activateConstraints([topConstraint, bottomConstraint, leftConstraint, rightConstraint])
+    }
+    
+    static func addBottomConstraintsFromView(view: UIView, toView: UIView, constant: CGFloat) {
+        let topConstraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: -constant)
+        let bottomConstraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
+        let leftConstraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        let rightConstraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
+        NSLayoutConstraint.activateConstraints([topConstraint, bottomConstraint, leftConstraint, rightConstraint])
+    }
+    
+    static func addTopConstraintsFromView(view: UIView, toView: UIView, constant: CGFloat) {
+        let topConstraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor)
+        let bottomConstraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: constant)
+        let leftConstraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        let rightConstraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
+        NSLayoutConstraint.activateConstraints([topConstraint, bottomConstraint, leftConstraint, rightConstraint])
+    }
+
+}
+
 public class SmileRoundedTableViewCell: UITableViewCell {
 
     //MARK: Property - IBInspectable
@@ -18,6 +45,10 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     //MARK: Property
     let shapeLayer = CAShapeLayer()
     let lineLayer = CALayer()
+    
+    let roundView = UIView()
+    let topView = UIView()
+    let bottomView = UIView()
     
     //margin for draw rect
     private let Margin: CGFloat = 0
@@ -47,6 +78,29 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     //MARK: Life Cycle
     override public func awakeFromNib() {
         super.awakeFromNib()
+        
+        let testColor = UIColor.redColor()
+        
+        roundView.backgroundColor = testColor
+        topView.backgroundColor = testColor
+        bottomView.backgroundColor = testColor
+        
+        roundView.layer.cornerRadius = cornerRadius
+        
+        self.insertSubview(roundView, belowSubview: self.contentView)
+        self.insertSubview(topView, belowSubview: self.contentView)
+        self.insertSubview(bottomView, belowSubview: self.contentView)
+        
+        self.contentView.backgroundColor = UIColor.clearColor()
+        self.backgroundColor = UIColor.clearColor()
+        
+        roundView.translatesAutoresizingMaskIntoConstraints = false
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        bottomView.translatesAutoresizingMaskIntoConstraints = false
+        
+        ConstraintHelper.addEqualConstraintsFromView(roundView, toView: self)
+        ConstraintHelper.addTopConstraintsFromView(topView, toView: self, constant: cornerRadius)
+        ConstraintHelper.addBottomConstraintsFromView(bottomView, toView: self, constant: cornerRadius)
     }
     
     //MARK: Helpe Method
@@ -62,32 +116,21 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     //MARK: drawRect
     override public func drawRect(rect: CGRect) {
         super.drawRect(rect)
-        var pathRef: CGMutablePathRef = CGPathCreateMutable()
-        var addLine = false
         if let tableview = getTableview(),
             let indexPath = tableview.indexPathForCell(self) {
                 if indexPath.row == 0 && tableview.numberOfRowsInSection(indexPath.section) == 1 {
-                    pathRef = CreateBothCornerPath()
+                    self.topView.hidden = true
+                    self.bottomView.hidden = true
                 } else if indexPath.row == 0 {
-                    pathRef = CreateTopCornerPath()
+                    self.topView.hidden = true
+                    self.bottomView.hidden = false
                 } else if indexPath.row == tableview.numberOfRowsInSection(indexPath.section) - 1 {
-                    pathRef = CreateBottomCornerPath()
-                    addLine = true
+                    self.topView.hidden = false
+                    self.bottomView.hidden = true
                 } else {
-                    pathRef = CreateNoneCornerPath()
-                    addLine = true
+                    self.topView.hidden = false
+                    self.bottomView.hidden = false
                 }
-        }
-        shapeLayer.path = pathRef
-        self.layer.mask = shapeLayer
-        
-        if (addLine == true) {
-            let lineHeight: CGFloat = (0.5)
-            lineLayer.frame = CGRectMake(separatorLineInset.left, lineHeight, bounds.size.width - separatorLineInset.left - separatorLineInset.right - Margin, -lineHeight)
-            lineLayer.backgroundColor = UIColor(red: 206/255.0, green: 206/255.0, blue: 210/255.0, alpha: 1).CGColor
-            self.layer.addSublayer(lineLayer)
-        } else {
-            lineLayer.removeFromSuperlayer()
         }
     }
 }
