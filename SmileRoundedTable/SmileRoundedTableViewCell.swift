@@ -7,31 +7,50 @@
 
 import UIKit
 
-struct ConstraintHelper {
-    static func addEqualConstraintsFromView(view: UIView, toView: UIView) {
-        let topConstraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor)
-        let bottomConstraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
-        let leftConstraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
-        let rightConstraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
-        NSLayoutConstraint.activateConstraints([topConstraint, bottomConstraint, leftConstraint, rightConstraint])
+private struct ConstraintHelper {
+    enum Anchor: Int {
+        case Top
+        case Left
+        case Right
+        case Bottom
+        case Count
+        
+        static var all: [Anchor] {
+            let result = (0..<Anchor.Count.rawValue).map { Anchor(rawValue: $0)! }
+            return result
+        }
+        
+        static func anchorsExceptAnchor(anchor: Anchor) -> [Anchor] {
+            let result = all.filter { $0.rawValue != anchor.rawValue }
+            return result
+        }
     }
     
-    static func addBottomConstraintsFromView(view: UIView, toView: UIView, constant: CGFloat) {
-        let topConstraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: -constant)
-        let bottomConstraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
-        let leftConstraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
-        let rightConstraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
-        NSLayoutConstraint.activateConstraints([topConstraint, bottomConstraint, leftConstraint, rightConstraint])
+    static func constraintWithAnchor(anchor: Anchor, constant: CGFloat = 0, fromView view: UIView, toView: UIView) -> NSLayoutConstraint {
+        let constraint: NSLayoutConstraint
+        switch anchor {
+        case .Top:
+            constraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: -constant)
+        case .Left:
+            constraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor, constant: constant)
+        case .Right:
+            constraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: constant)
+        case .Bottom:
+            constraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: constant)
+        case .Count:
+            constraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
+        }
+        return constraint
     }
     
-    static func addTopConstraintsFromView(view: UIView, toView: UIView, constant: CGFloat) {
-        let topConstraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor)
-        let bottomConstraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: constant)
-        let leftConstraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
-        let rightConstraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
-        NSLayoutConstraint.activateConstraints([topConstraint, bottomConstraint, leftConstraint, rightConstraint])
+    static func adjoin(exceptAnchor anchor: Anchor = .Top, constant: CGFloat = 0, fromView view: UIView, toView: UIView) {
+        var constraints = [NSLayoutConstraint]()
+        constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
+        Anchor.anchorsExceptAnchor(anchor).forEach {
+            constraints.append(constraintWithAnchor($0, fromView: view, toView: toView))
+        }
+        NSLayoutConstraint.activateConstraints(constraints)
     }
-
 }
 
 public class SmileRoundedTableViewCell: UITableViewCell {
@@ -43,15 +62,9 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     public var separatorLeftInset: CGFloat = 20
     
     //MARK: Property
-    let shapeLayer = CAShapeLayer()
-    let lineLayer = CALayer()
-    
-    let roundView = UIView()
-    let topView = UIView()
-    let bottomView = UIView()
-    
-    //margin for draw rect
-    private let Margin: CGFloat = 0
+    private let roundView = UIView()
+    private let topView = UIView()
+    private let bottomView = UIView()
     
     //MARK: Setter
     private var separatorLineInset: UIEdgeInsets {
@@ -61,29 +74,27 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     override public var frame: CGRect {
         didSet(newFrame){
             super.frame.origin.x += margin
-            if let tableview = getTableview() {
-                if tableview.frame.width == super.frame.size.width {
-                    super.frame.size.width -= 2 * margin
-                }
-            }
+            guard let tableview = getTableview() else { return }
+            guard tableview.frame.width == super.frame.size.width else { return }
+            super.frame.size.width -= 2 * margin
         }
     }
 
+    //MARK: Life Cycle
     public override func didMoveToSuperview() {
         if let tableview = getTableview() {
             tableview.separatorStyle = .None
         }
     }
     
-    //MARK: Life Cycle
     override public func awakeFromNib() {
         super.awakeFromNib()
         
         let testColor = UIColor.redColor()
         
-        roundView.backgroundColor = testColor
-        topView.backgroundColor = testColor
-        bottomView.backgroundColor = testColor
+        roundView.backgroundColor = frontColor
+        topView.backgroundColor = frontColor
+        bottomView.backgroundColor = frontColor
         
         roundView.layer.cornerRadius = cornerRadius
         
@@ -98,102 +109,39 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         topView.translatesAutoresizingMaskIntoConstraints = false
         bottomView.translatesAutoresizingMaskIntoConstraints = false
         
-        ConstraintHelper.addEqualConstraintsFromView(roundView, toView: self)
-        ConstraintHelper.addTopConstraintsFromView(topView, toView: self, constant: cornerRadius)
-        ConstraintHelper.addBottomConstraintsFromView(bottomView, toView: self, constant: cornerRadius)
+        ConstraintHelper.adjoin(fromView: roundView, toView: self)
+        ConstraintHelper.adjoin(exceptAnchor: .Bottom, constant: cornerRadius, fromView: topView, toView: self)
+        ConstraintHelper.adjoin(exceptAnchor: .Top, constant: cornerRadius, fromView: bottomView, toView: self)
     }
     
     //MARK: Helpe Method
     func getTableview() -> UITableView? {
-        if let view = superview as? UITableView {
-            return view
-        } else {
+        guard let view = superview as? UITableView else {
             return superview?.superview as? UITableView
         }
+        return view
     }
-
-
-    //MARK: drawRect
-    override public func drawRect(rect: CGRect) {
+    
+    public override func drawRect(rect: CGRect) {
         super.drawRect(rect)
-        if let tableview = getTableview(),
-            let indexPath = tableview.indexPathForCell(self) {
-                if indexPath.row == 0 && tableview.numberOfRowsInSection(indexPath.section) == 1 {
-                    self.topView.hidden = true
-                    self.bottomView.hidden = true
-                } else if indexPath.row == 0 {
-                    self.topView.hidden = true
-                    self.bottomView.hidden = false
-                } else if indexPath.row == tableview.numberOfRowsInSection(indexPath.section) - 1 {
-                    self.topView.hidden = false
-                    self.bottomView.hidden = true
-                } else {
-                    self.topView.hidden = false
-                    self.bottomView.hidden = false
-                }
+        handleRoundCorner()
+    }
+    
+    func handleRoundCorner() {
+        guard let tableview = getTableview(),
+              let indexPath = tableview.indexPathForCell(self) else { return }
+        if indexPath.row == 0 && tableview.numberOfRowsInSection(indexPath.section) == 1 {
+            self.topView.hidden = true
+            self.bottomView.hidden = true
+        } else if indexPath.row == 0 {
+            self.topView.hidden = true
+            self.bottomView.hidden = false
+        } else if indexPath.row == tableview.numberOfRowsInSection(indexPath.section) - 1 {
+            self.topView.hidden = false
+            self.bottomView.hidden = true
+        } else {
+            self.topView.hidden = false
+            self.bottomView.hidden = false
         }
-    }
-}
-
-extension SmileRoundedTableViewCell {
-    private func CreateTopCornerPath() -> CGMutablePathRef {
-        let pathRef: CGMutablePathRef = CGPathCreateMutable()
-        
-        let height = self.frame.height
-        let width = self.frame.width
-        
-        CGPathMoveToPoint(pathRef, nil, Margin, height)
-        CGPathAddLineToPoint(pathRef, nil, Margin, cornerRadius)
-        CGPathAddArc(pathRef, nil, Margin + cornerRadius, cornerRadius, cornerRadius, CGFloat(M_PI), CGFloat(3/2.0 * M_PI), false)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin - cornerRadius, 0)
-        CGPathAddArc(pathRef, nil, width - Margin - cornerRadius,cornerRadius, cornerRadius, CGFloat(3/2 * M_PI), CGFloat(2.0 * M_PI), false)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin, height)
-        CGPathAddLineToPoint(pathRef, nil, Margin, height)
-        return pathRef
-    }
-    
-    private func CreateBottomCornerPath() -> CGMutablePathRef {
-        let pathRef: CGMutablePathRef = CGPathCreateMutable()
-        
-        let height = self.frame.height
-        let width = self.frame.width
-        CGPathMoveToPoint(pathRef, nil, Margin, 0)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin, 0)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin, height - cornerRadius)
-        CGPathAddArc(pathRef, nil, width - Margin - cornerRadius, height - cornerRadius, cornerRadius, 0, CGFloat(1/2.0 * M_PI), false)
-        CGPathAddLineToPoint(pathRef, nil, Margin, height)
-        CGPathAddArc(pathRef, nil, Margin + cornerRadius, height - cornerRadius, cornerRadius, CGFloat(1/2 * M_PI), CGFloat(M_PI), false)
-        CGPathAddLineToPoint(pathRef, nil, Margin, 0)
-        return pathRef
-    }
-    
-    private func CreateBothCornerPath() -> CGMutablePathRef {
-        let pathRef: CGMutablePathRef = CGPathCreateMutable()
-        
-        let height = self.frame.height
-        let width = self.frame.width
-        
-        CGPathMoveToPoint(pathRef, nil, Margin, height - cornerRadius)
-        CGPathAddLineToPoint(pathRef, nil, Margin, cornerRadius)
-        CGPathAddArc(pathRef, nil, Margin + cornerRadius, cornerRadius, cornerRadius, CGFloat(M_PI), CGFloat(3/2.0 * M_PI), false)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin - cornerRadius, 0)
-        CGPathAddArc(pathRef, nil, width - Margin - cornerRadius,cornerRadius, cornerRadius, CGFloat(3/2 * M_PI), CGFloat(2.0 * M_PI), false)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin, height - cornerRadius)
-        CGPathAddArc(pathRef, nil, width - Margin - cornerRadius, height - cornerRadius, cornerRadius, 0, CGFloat(1/2.0 * M_PI), false)
-        CGPathAddLineToPoint(pathRef, nil, Margin + cornerRadius, height)
-        CGPathAddArc(pathRef, nil, Margin + cornerRadius, height - cornerRadius, cornerRadius, CGFloat(1/2 * M_PI), CGFloat(M_PI), false)
-        return pathRef
-    }
-    
-    private func CreateNoneCornerPath() -> CGMutablePathRef {
-        let pathRef: CGMutablePathRef = CGPathCreateMutable()
-        let height = self.frame.height
-        let width = self.frame.width
-        CGPathMoveToPoint(pathRef, nil, Margin, 0)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin, 0)
-        CGPathAddLineToPoint(pathRef, nil, width - Margin, height)
-        CGPathAddLineToPoint(pathRef, nil, Margin, height)
-        CGPathAddLineToPoint(pathRef, nil, Margin, 0)
-        return pathRef
     }
 }

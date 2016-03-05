@@ -8,24 +8,25 @@
 
 import UIKit
 
-
-class WiFiSettingsTableVC: UITableViewController {
-    let dataSource = [
-        //section 0
+struct RawDataSource {
+    static var count: Int {
+        return data.count
+    }
+    static let data =  [
         [SettingsCellType.RightDetailWithDisclosureCell(text: "Wi-Fi", detailText: "None")],
-        //section 1
         [SettingsCellType.ButtonCell(text: "Test Wi-Fi")],
-        //section 2
         [SettingsCellType.RightDetailWithDisclosureCell(text: "Wi-Fi GHz", detailText: "2.4")],
-        //section 3
         [
             SettingsCellType.SwitchCell(text: "Wi-Fi Automation Connection"),
             SettingsCellType.SwitchCell(text: "Wi-Fi Manual"),
             SettingsCellType.RightDetailWithDisclosureCell(text: "When to connect", detailText: "For every picture")
         ],
-        //section 4
         [SettingsCellType.SwitchCell(text: "Private Mode")]
     ]
+}
+
+class WiFiSettingsTableVC: UITableViewController {
+    var dataSource = Array((0..<1).map { _ in RawDataSource.data }.flatten())
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return dataSource.count
@@ -53,5 +54,27 @@ class WiFiSettingsTableVC: UITableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        handleButtonCell(indexPath)
+    }
+    
+    private func handleButtonCell(indexPath: NSIndexPath) {
+        let type = dataSource[indexPath.section][indexPath.row]
+        switch type {
+        case .ButtonCell(_):
+            let random = Int(arc4random()) % RawDataSource.count
+            dataSource.append(RawDataSource.data[random])
+            reloadTableAndScrollToBottom()
+        default:
+            return
+        }
+    }
+    
+    private func reloadTableAndScrollToBottom() {
+        let section = self.numberOfSectionsInTableView(self.tableView) - 1
+        let indexPath = NSIndexPath(forRow: 0, inSection: section)
+        self.tableView.beginUpdates()
+        self.tableView.insertSections(NSIndexSet(index: section), withRowAnimation: .Fade)
+        self.tableView.endUpdates()
+        self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top , animated: true)
     }
 }
