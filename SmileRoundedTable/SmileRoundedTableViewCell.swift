@@ -32,7 +32,7 @@ private struct ConstraintHelper {
         case .Top:
             constraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: -constant)
         case .Left:
-            constraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor, constant: constant)
+            constraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor, constant: -constant)
         case .Right:
             constraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: constant)
         case .Bottom:
@@ -43,12 +43,22 @@ private struct ConstraintHelper {
         return constraint
     }
     
-    static func adjoin(exceptAnchor anchor: Anchor = .Top, constant: CGFloat = 0, fromView view: UIView, toView: UIView) {
+    static func adjoin(exceptAnchor anchor: Anchor = .Top, hasConstant constant: CGFloat = 0, fromView view: UIView, toView: UIView) {
         var constraints = [NSLayoutConstraint]()
         constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
         Anchor.anchorsExceptAnchor(anchor).forEach {
             constraints.append(constraintWithAnchor($0, fromView: view, toView: toView))
         }
+        NSLayoutConstraint.activateConstraints(constraints)
+    }
+    
+    static func adjoin(exceptAnchor anchor: Anchor, hasConstant constant: CGFloat, noAnchor: Anchor, fromView view: UIView, toView: UIView, withHeight height: CGFloat) {
+        var constraints = [NSLayoutConstraint]()
+        constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
+        Anchor.anchorsExceptAnchor(anchor).filter { $0 != noAnchor }.forEach {
+            constraints.append(constraintWithAnchor($0, fromView: view, toView: toView))
+        }
+        constraints.append(view.heightAnchor.constraintEqualToConstant(height))
         NSLayoutConstraint.activateConstraints(constraints)
     }
 }
@@ -58,8 +68,10 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     //MARK: Property - IBInspectable
     public var cornerRadius: CGFloat = 6
     public var margin: CGFloat = 28
-    public var frontColor: UIColor = UIColor.whiteColor()
+    public var frontColor = UIColor.whiteColor()
+    public var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1)
     public var separatorLeftInset: CGFloat = 20
+    public var selectedColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
     
     //MARK: Property
     private let roundView = UIView()
@@ -89,9 +101,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     
     override public func awakeFromNib() {
         super.awakeFromNib()
-        
-        let testColor = UIColor.redColor()
-        
+ 
         roundView.backgroundColor = frontColor
         topView.backgroundColor = frontColor
         bottomView.backgroundColor = frontColor
@@ -100,7 +110,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         
         self.insertSubview(roundView, belowSubview: self.contentView)
         self.insertSubview(topView, belowSubview: self.contentView)
-        self.insertSubview(bottomView, belowSubview: self.contentView)
+        self.insertSubview(bottomView, belowSubview: self.roundView)
         
         self.contentView.backgroundColor = UIColor.clearColor()
         self.backgroundColor = UIColor.clearColor()
@@ -110,9 +120,18 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         bottomView.translatesAutoresizingMaskIntoConstraints = false
         
         ConstraintHelper.adjoin(fromView: roundView, toView: self)
-        ConstraintHelper.adjoin(exceptAnchor: .Bottom, constant: cornerRadius, fromView: topView, toView: self)
-        ConstraintHelper.adjoin(exceptAnchor: .Top, constant: cornerRadius, fromView: bottomView, toView: self)
+        ConstraintHelper.adjoin(exceptAnchor: .Bottom, hasConstant: cornerRadius, fromView: topView, toView: self)
+        ConstraintHelper.adjoin(exceptAnchor: .Top, hasConstant: cornerRadius, fromView: bottomView, toView: self)
+        
+        //***separator
+        let separator = UIView()
+        separator.backgroundColor = separatorColor
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        
+        topView.addSubview(separator)
+        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Bottom, fromView: separator, toView: topView, withHeight: 0.5)
     }
+
     
     public override func layoutSubviews() {
         super.layoutSubviews()

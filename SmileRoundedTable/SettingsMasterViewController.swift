@@ -13,7 +13,7 @@ class SettingsMasterViewController: UITableViewController, UISplitViewController
     //collapse detail view controller when first launch in compact size class
     private var collapseDetailViewController = true
     
-    let dataSource = [
+    private let dataSource = [
         "Wi-Fi",
         "Blutooth"
     ]

@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct RawDataSource {
+private struct RawDataSource {
     static var count: Int {
         return data.count
     }
@@ -17,7 +17,7 @@ struct RawDataSource {
         [SettingsCellType.ButtonCell(text: "Test Wi-Fi")],
         [SettingsCellType.RightDetailWithDisclosureCell(text: "Wi-Fi GHz", detailText: "2.4")],
         [
-            SettingsCellType.SwitchCell(text: "Wi-Fi Automation Connection"),
+            SettingsCellType.SwitchCell(text: "Wi-Fi Connection"),
             SettingsCellType.SwitchCell(text: "Wi-Fi Manual"),
             SettingsCellType.RightDetailWithDisclosureCell(text: "When to connect", detailText: "For every picture")
         ],
@@ -26,7 +26,7 @@ struct RawDataSource {
 }
 
 class WiFiSettingsTableVC: UITableViewController {
-    var dataSource = Array((0..<1).map { _ in RawDataSource.data }.flatten())
+    private var dataSource = Array((0..<5).map { _ in RawDataSource.data }.flatten())
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return dataSource.count
