@@ -66,11 +66,11 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     private let topView = UIView()
     private let bottomView = UIView()
     
-    //MARK: Setter
     private var separatorLineInset: UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: separatorLeftInset, bottom: 0, right: 0)
     }
     
+    //MARK: Setter
     override public var frame: CGRect {
         didSet(newFrame){
             super.frame.origin.x += margin
@@ -114,29 +114,29 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         ConstraintHelper.adjoin(exceptAnchor: .Top, constant: cornerRadius, fromView: bottomView, toView: self)
     }
     
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        handleRoundCorner()
+    }
+    
     //MARK: Helpe Method
-    func getTableview() -> UITableView? {
+    private func getTableview() -> UITableView? {
         guard let view = superview as? UITableView else {
             return superview?.superview as? UITableView
         }
         return view
     }
     
-    public override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
-        handleRoundCorner()
-    }
-    
-    func handleRoundCorner() {
-        guard let tableview = getTableview(),
-              let indexPath = tableview.indexPathForCell(self) else { return }
-        if indexPath.row == 0 && tableview.numberOfRowsInSection(indexPath.section) == 1 {
+    private func handleRoundCorner() {
+        guard let tableView = getTableview(),
+            let indexPath = tableView.indexPathForRowAtPoint(self.center) else { return }
+        if indexPath.row == 0 && tableView.numberOfRowsInSection(indexPath.section) == 1 {
             self.topView.hidden = true
             self.bottomView.hidden = true
         } else if indexPath.row == 0 {
             self.topView.hidden = true
             self.bottomView.hidden = false
-        } else if indexPath.row == tableview.numberOfRowsInSection(indexPath.section) - 1 {
+        } else if indexPath.row == tableView.numberOfRowsInSection(indexPath.section) - 1 {
             self.topView.hidden = false
             self.bottomView.hidden = true
         } else {
@@ -144,4 +144,5 @@ public class SmileRoundedTableViewCell: UITableViewCell {
             self.bottomView.hidden = false
         }
     }
+    
 }
