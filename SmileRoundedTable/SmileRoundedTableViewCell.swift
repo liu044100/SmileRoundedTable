@@ -52,7 +52,7 @@ private struct ConstraintHelper {
         NSLayoutConstraint.activateConstraints(constraints)
     }
     
-    static func adjoin(exceptAnchor anchor: Anchor, hasConstant constant: CGFloat, noAnchor: Anchor, fromView view: UIView, toView: UIView, withHeight height: CGFloat) {
+    static func adjoin(exceptAnchor anchor: Anchor, hasConstant constant: CGFloat, noAnchor: Anchor, withHeight height: CGFloat, fromView view: UIView, toView: UIView) {
         var constraints = [NSLayoutConstraint]()
         constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
         Anchor.anchorsExceptAnchor(anchor).filter { $0 != noAnchor }.forEach {
@@ -140,7 +140,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         separator.translatesAutoresizingMaskIntoConstraints = false
         
         topView.addSubview(separator)
-        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Bottom, fromView: separator, toView: topView, withHeight: 0.5)
+        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Bottom, withHeight: 0.5, fromView: separator, toView: topView)
         
         self.selectionStyle = .None
     }
