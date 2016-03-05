@@ -138,7 +138,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         handleRoundCorner()
     }
     
-    //MARK: Helpe Method
+    //MARK: Help Method
     private func getTableview() -> UITableView? {
         guard let view = superview as? UITableView else {
             return superview?.superview as? UITableView
