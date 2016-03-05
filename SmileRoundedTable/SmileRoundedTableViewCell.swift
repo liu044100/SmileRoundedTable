@@ -71,11 +71,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     public var frontColor = UIColor.whiteColor()
     public var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1)
     public var separatorLeftInset: CGFloat = 20
-    public var selectedColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1) {
-        didSet {
-            self.selectedBackgroundView = self.createSelectedBGView()
-        }
-    }
+    public var selectedColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
     
     //MARK: Property
     private let roundView = UIView()
@@ -95,6 +91,17 @@ public class SmileRoundedTableViewCell: UITableViewCell {
             super.frame.size.width -= 2 * margin
         }
     }
+    
+    public override func setHighlighted(highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        handleColor(highlighted, animated: animated)
+    }
+
+    public override func setSelected(selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        handleColor(selected, animated: animated)
+    }
+    
 
     //MARK: Life Cycle
     public override func didMoveToSuperview() {
@@ -135,8 +142,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         topView.addSubview(separator)
         ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Bottom, fromView: separator, toView: topView, withHeight: 0.5)
         
-        //***selected color
-        self.selectedBackgroundView = self.createSelectedBGView()
+        self.selectionStyle = .None
     }
 
     
@@ -150,13 +156,6 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         guard let view = superview as? UITableView else {
             return superview?.superview as? UITableView
         }
-        return view
-    }
-    
-    private func createSelectedBGView() -> UIView {
-        let view = UIView()
-        view.layer.cornerRadius = cornerRadius
-        view.backgroundColor = selectedColor
         return view
     }
     
@@ -176,6 +175,30 @@ public class SmileRoundedTableViewCell: UITableViewCell {
             self.topView.hidden = false
             self.bottomView.hidden = false
         }
+    }
+    
+    private func handleColor(highlighted: Bool, animated: Bool) {
+        let views = [topView, roundView, bottomView]
+        let color = currentColor(highlighted)
+        changeViewsColor(views, color: color, animated: animated)
+    }
+    
+    private func changeViewsColor(views: [UIView], color: UIColor, animated: Bool) {
+        let handle: [UIView] -> Void = { views in views.forEach { $0.backgroundColor = color } }
+        guard animated else {
+            handle(views)
+            return
+        }
+        UIView.animateWithDuration(0.6) { () -> Void in
+            handle(views)
+        }
+    }
+    
+    private func currentColor(highlighted: Bool) -> UIColor {
+        guard highlighted else {
+            return frontColor
+        }
+        return selectedColor
     }
     
 }
