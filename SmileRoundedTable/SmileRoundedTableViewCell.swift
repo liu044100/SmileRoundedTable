@@ -69,7 +69,11 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     public var cornerRadius: CGFloat = 6
     public var margin: CGFloat = 28
     public var frontColor = UIColor.whiteColor()
-    public var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1)
+    public var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1) {
+        didSet {
+            self.separatorView.backgroundColor = separatorColor
+        }
+    }
     public var separatorLeftInset: CGFloat = 20
     public var selectedColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
     
@@ -77,6 +81,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     private let roundView = UIView()
     private let topView = UIView()
     private let bottomView = UIView()
+    private let separatorView = UIView()
     
     private var separatorLineInset: UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: separatorLeftInset, bottom: 0, right: 0)
@@ -105,9 +110,13 @@ public class SmileRoundedTableViewCell: UITableViewCell {
 
     //MARK: Life Cycle
     public override func didMoveToSuperview() {
-        if let tableview = getTableview() {
-            tableview.separatorStyle = .None
+        super.didMoveToSuperview()
+        guard let tableview = getTableview() else {
+            return
         }
+        
+        //Because have made new separator view, so set separatorStyle to None
+        tableview.separatorStyle = .None
     }
     
     override public func awakeFromNib() {
@@ -135,13 +144,13 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         ConstraintHelper.adjoin(exceptAnchor: .Top, hasConstant: cornerRadius, fromView: bottomView, toView: self)
         
         //***separator
-        let separator = UIView()
-        separator.backgroundColor = separatorColor
-        separator.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.backgroundColor = separatorColor
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
         
-        topView.addSubview(separator)
-        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Bottom, withHeight: 0.5, fromView: separator, toView: topView)
+        topView.addSubview(separatorView)
+        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Bottom, withHeight: 0.5, fromView: separatorView, toView: topView)
         
+        //Because use new roundView & topView & bottomView for selection, so disable default selectionStyle
         self.selectionStyle = .None
     }
 
