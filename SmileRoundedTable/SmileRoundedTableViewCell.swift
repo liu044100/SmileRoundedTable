@@ -186,6 +186,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         }
     }
     
+    ///Help Method For Cell Selection Color
     private func handleColor(highlighted: Bool, animated: Bool) {
         let views = [topView, roundView, bottomView]
         let color = currentColor(highlighted)
