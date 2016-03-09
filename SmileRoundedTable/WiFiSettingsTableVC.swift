@@ -50,22 +50,21 @@ class WiFiSettingsTableVC: UITableViewController {
         case .SwitchCell(let text):
             cell.textLabel?.text = text
         }
-        //for test SmileRoundedTableViewCell api
-        testCustomCell(cell, indexPath: indexPath)
+        //testAPI(cell, indexPath: indexPath)
         return cell
     }
     
-    private func testCustomCell(cell: SmileRoundedTableViewCell, indexPath: NSIndexPath) {
+    private func testAPI(cell: SmileRoundedTableViewCell, indexPath: NSIndexPath) {
         let type = dataSource[indexPath.section][indexPath.row]
         switch type {
 //        case .ButtonCell(_):
 //            cell.selectionColor = UIColor.darkGrayColor()
 //            cell.cornerRadius = 22
-        case .SwitchCell(_):
-            cell.selectionStyle = .None
+//        case .SwitchCell(_):
+//            cell.selectionStyle = .None
 //            cell.separatorColor = UIColor.greenColor()
-            cell.separatorInset = UIEdgeInsetsMake(0, 50, 0, 50)
         default:
+            cell.margin = 40
             break
         }
     }

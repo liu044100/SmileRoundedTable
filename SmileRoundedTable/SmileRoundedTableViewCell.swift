@@ -134,10 +134,12 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     
     override public func awakeFromNib() {
         super.awakeFromNib()
- 
+        
         roundView.backgroundColor = frontColor
         topView.backgroundColor = frontColor
         bottomView.backgroundColor = frontColor
+        
+        roundView.layer.cornerRadius = cornerRadius
         
         self.insertSubview(roundView, belowSubview: self.contentView)
         self.insertSubview(topView, belowSubview: self.roundView)
@@ -180,7 +182,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     }
     
     private func updateViewStyle() {
-        roundView.layer.cornerRadius = cornerRadius
+        //update cell round corner style
         guard let tableView = getTableview(),
             let indexPath = tableView.indexPathForRowAtPoint(self.center) else { return }
         if indexPath.row == 0 && tableView.numberOfRowsInSection(indexPath.section) == 1 {
@@ -195,6 +197,10 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         } else {
             self.topView.hidden = false
             self.bottomView.hidden = false
+        }
+        //update corner radius
+        if roundView.layer.cornerRadius != cornerRadius {
+            roundView.layer.cornerRadius = cornerRadius
         }
     }
     
