@@ -50,7 +50,7 @@ class WiFiSettingsTableVC: UITableViewController {
         case .SwitchCell(let text):
             cell.textLabel?.text = text
         }
-        testAPI(cell, indexPath: indexPath)
+        //testAPI(cell, indexPath: indexPath)
         return cell
     }
     
