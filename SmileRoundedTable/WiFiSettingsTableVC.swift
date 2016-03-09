@@ -26,7 +26,7 @@ private struct RawDataSource {
 }
 
 class WiFiSettingsTableVC: UITableViewController {
-    private var dataSource = Array((0..<5).map { _ in RawDataSource.data }.flatten())
+    private var dataSource = Array((0..<50).map { _ in RawDataSource.data }.flatten())
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -50,21 +50,22 @@ class WiFiSettingsTableVC: UITableViewController {
         case .SwitchCell(let text):
             cell.textLabel?.text = text
         }
-        //testAPI(cell, indexPath: indexPath)
+        testAPI(cell, indexPath: indexPath)
         return cell
     }
     
     private func testAPI(cell: SmileRoundedTableViewCell, indexPath: NSIndexPath) {
         let type = dataSource[indexPath.section][indexPath.row]
         switch type {
-//        case .ButtonCell(_):
-//            cell.selectionColor = UIColor.darkGrayColor()
-//            cell.cornerRadius = 22
-//        case .SwitchCell(_):
-//            cell.selectionStyle = .None
-//            cell.separatorColor = UIColor.greenColor()
+        case .ButtonCell(_):
+            cell.selectionColor = UIColor.darkGrayColor()
+            cell.cornerRadius = 22
+        case .SwitchCell(_):
+            cell.selectionStyle = .None
+            cell.separatorColor = UIColor.greenColor()
+            cell.separatorInset = UIEdgeInsetsMake(0, 50, 0, 50)
         default:
-            cell.margin = 40
+            //cell.margin = 40
             break
         }
     }

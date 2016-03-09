@@ -28,6 +28,7 @@ class WiFiTableVC: UITableViewController {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+        cell.separatorInset = UIEdgeInsetsMake(0, 50, 0, 50)
         return cell
     }
     

@@ -88,7 +88,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     }
     
     //MARK: Constant
-    private let separatorLeftInset: CGFloat = 20
+    private let separatorLeftInset: CGFloat = 16
     
     //MARK: Property Private
     private let roundView = UIView()
@@ -171,6 +171,8 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     public override func layoutSubviews() {
         super.layoutSubviews()
         updateViewStyle()
+        updateSeparatorViewInset()
+        //print("spearator -> \(self.separatorInset)\n   margin -> \(self.layoutMargins)")
     }
     
     //MARK: Help Method
@@ -229,6 +231,25 @@ public class SmileRoundedTableViewCell: UITableViewCell {
             return frontColor
         }
         return selectionColor
+    }
+    
+    ///update separator view constraint
+    private func updateSeparatorViewInset() {
+        for x in self.bottomView.constraints {
+            var constant: CGFloat
+            switch x.firstAttribute {
+            case .Left:
+                constant = -self.separatorInset.left
+            case .Right:
+                constant = self.separatorInset.right
+            default:
+                continue
+            }
+            guard x.constant != constant else {
+                continue
+            }
+            x.constant = constant
+        }
     }
     
 }
