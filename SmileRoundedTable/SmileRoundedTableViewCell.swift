@@ -67,19 +67,20 @@ public class SmileRoundedTableViewCell: UITableViewCell {
 
     //MARK: Property Public
     public var margin: CGFloat = 28
-    public var cornerRadius: CGFloat = 6 {
-        didSet {
-            self.roundView.layer.cornerRadius = cornerRadius
-        }
-    }
+    public var cornerRadius: CGFloat = 6
     public var frontColor = UIColor.whiteColor() {
-        didSet {
+        didSet(newValue) {
             self.contentViews.forEach {
-                $0.backgroundColor = frontColor
+                $0.backgroundColor = newValue
             }
         }
     }
-    public var selectedColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
+    public var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1) {
+        didSet(newValue) {
+            self.separatorView.backgroundColor = newValue
+        }
+    }
+    public var selectionColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
     override public var selectionStyle: UITableViewCellSelectionStyle {
         didSet(newValue) {
             needSelected = !(newValue.rawValue == 0)
@@ -98,17 +99,13 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         return [roundView, topView, bottomView]
     }
     private var needSelected: Bool = true
-    private var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1) {
-        didSet {
-            self.separatorView.backgroundColor = separatorColor
-        }
-    }
     
     //MARK: Setter
     override public var frame: CGRect {
         didSet(newFrame){
             super.frame.origin.x += margin
             guard let tableview = getTableview() else { return }
+            //only change frame when cell frame == talbe view frame
             guard tableview.frame.width == super.frame.size.width else { return }
             super.frame.size.width -= 2 * margin
         }
@@ -128,12 +125,11 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     //MARK: Life Cycle
     public override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard let tableview = getTableview() else {
+        guard let tableView = getTableview() else {
             return
         }
-        
-        //Because have made new separator view, so set separatorStyle to None
-        tableview.separatorStyle = .None
+        //Because have made new separator view, so set tableView separatorStyle to None
+        tableView.separatorStyle = .None
     }
     
     override public func awakeFromNib() {
@@ -143,11 +139,9 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         topView.backgroundColor = frontColor
         bottomView.backgroundColor = frontColor
         
-        roundView.layer.cornerRadius = cornerRadius
-        
         self.insertSubview(roundView, belowSubview: self.contentView)
-        self.insertSubview(topView, belowSubview: self.contentView)
-        self.insertSubview(bottomView, belowSubview: self.roundView)
+        self.insertSubview(topView, belowSubview: self.roundView)
+        self.insertSubview(bottomView, belowSubview: self.contentView)
         
         self.contentView.backgroundColor = UIColor.clearColor()
         self.backgroundColor = UIColor.clearColor()
@@ -164,8 +158,8 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         separatorView.backgroundColor = separatorColor
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         
-        topView.addSubview(separatorView)
-        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Bottom, withHeight: 0.5, fromView: separatorView, toView: topView)
+        bottomView.addSubview(separatorView)
+        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Top, withHeight: 0.5, fromView: separatorView, toView: bottomView)
         
         //Because use new roundView & topView & bottomView for selection, so disable default selectionStyle
         self.selectionStyle = .None
@@ -186,6 +180,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     }
     
     private func updateViewStyle() {
+        roundView.layer.cornerRadius = cornerRadius
         guard let tableView = getTableview(),
             let indexPath = tableView.indexPathForRowAtPoint(self.center) else { return }
         if indexPath.row == 0 && tableView.numberOfRowsInSection(indexPath.section) == 1 {
@@ -201,14 +196,6 @@ public class SmileRoundedTableViewCell: UITableViewCell {
             self.topView.hidden = false
             self.bottomView.hidden = false
         }
-        
-        //handle tableView style api
-        self.separatorView.hidden = (tableView.separatorStyle.rawValue == 0)
-        
-        guard let color = tableView.separatorColor else {
-            return
-        }
-        self.selectedColor = color
     }
     
     ///Help Method For Cell Selection Color
@@ -235,7 +222,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         guard highlighted else {
             return frontColor
         }
-        return selectedColor
+        return selectionColor
     }
     
 }
