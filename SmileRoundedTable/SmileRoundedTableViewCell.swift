@@ -65,26 +65,43 @@ private struct ConstraintHelper {
 
 public class SmileRoundedTableViewCell: UITableViewCell {
 
-    //MARK: Property - IBInspectable
-    public var cornerRadius: CGFloat = 6
+    //MARK: Property Public
     public var margin: CGFloat = 28
-    public var frontColor = UIColor.whiteColor()
-    public var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1) {
+    public var cornerRadius: CGFloat = 6 {
         didSet {
-            self.separatorView.backgroundColor = separatorColor
+            self.roundView.layer.cornerRadius = cornerRadius
         }
     }
-    public var separatorLeftInset: CGFloat = 20
+    public var frontColor = UIColor.whiteColor() {
+        didSet {
+            self.contentViews.forEach {
+                $0.backgroundColor = frontColor
+            }
+        }
+    }
     public var selectedColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
+    override public var selectionStyle: UITableViewCellSelectionStyle {
+        didSet(newValue) {
+            needSelected = !(newValue.rawValue == 0)
+        }
+    }
     
-    //MARK: Property
+    //MARK: Constant
+    private let separatorLeftInset: CGFloat = 20
+    
+    //MARK: Property Private
     private let roundView = UIView()
     private let topView = UIView()
     private let bottomView = UIView()
     private let separatorView = UIView()
-    
-    private var separatorLineInset: UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: separatorLeftInset, bottom: 0, right: 0)
+    private var contentViews: [UIView] {
+        return [roundView, topView, bottomView]
+    }
+    private var needSelected: Bool = true
+    private var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1) {
+        didSet {
+            self.separatorView.backgroundColor = separatorColor
+        }
     }
     
     //MARK: Setter
@@ -157,7 +174,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        handleRoundCorner()
+        updateViewStyle()
     }
     
     //MARK: Help Method
@@ -168,7 +185,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         return view
     }
     
-    private func handleRoundCorner() {
+    private func updateViewStyle() {
         guard let tableView = getTableview(),
             let indexPath = tableView.indexPathForRowAtPoint(self.center) else { return }
         if indexPath.row == 0 && tableView.numberOfRowsInSection(indexPath.section) == 1 {
@@ -184,13 +201,23 @@ public class SmileRoundedTableViewCell: UITableViewCell {
             self.topView.hidden = false
             self.bottomView.hidden = false
         }
+        
+        //handle tableView style api
+        self.separatorView.hidden = (tableView.separatorStyle.rawValue == 0)
+        
+        guard let color = tableView.separatorColor else {
+            return
+        }
+        self.selectedColor = color
     }
     
     ///Help Method For Cell Selection Color
     private func handleColor(highlighted: Bool, animated: Bool) {
-        let views = [topView, roundView, bottomView]
+        guard self.needSelected else {
+            return
+        }
         let color = currentColor(highlighted)
-        changeViewsColor(views, color: color, animated: animated)
+        changeViewsColor(self.contentViews, color: color, animated: animated)
     }
     
     private func changeViewsColor(views: [UIView], color: UIColor, animated: Bool) {

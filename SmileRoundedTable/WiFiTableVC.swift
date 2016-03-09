@@ -15,6 +15,9 @@ class WiFiTableVC: UITableViewController {
     //MARK: Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.separatorStyle = .None
+        //self.tableView.separatorColor = UIColor.purpleColor()
+        //self.tableView.separatorInset = UIEdgeInsetsMake(0, 50, 0, 0)
     }
     
     // MARK: TableView data source
