@@ -20,7 +20,7 @@ private struct ConstraintHelper {
             return result
         }
         
-        static func anchorsExceptAnchor(anchor: Anchor) -> [Anchor] {
+        static func anchorsExcept(anchor: Anchor) -> [Anchor] {
             let result = all.filter { $0.rawValue != anchor.rawValue }
             return result
         }
@@ -46,7 +46,7 @@ private struct ConstraintHelper {
     static func adjoin(exceptAnchor anchor: Anchor = .Top, hasConstant constant: CGFloat = 0, fromView view: UIView, toView: UIView) {
         var constraints = [NSLayoutConstraint]()
         constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
-        Anchor.anchorsExceptAnchor(anchor).forEach {
+        Anchor.anchorsExcept(anchor).forEach {
             constraints.append(constraintWithAnchor($0, fromView: view, toView: toView))
         }
         NSLayoutConstraint.activateConstraints(constraints)
@@ -55,7 +55,7 @@ private struct ConstraintHelper {
     static func adjoin(exceptAnchor anchor: Anchor, hasConstant constant: CGFloat, noAnchor: Anchor, withHeight height: CGFloat, fromView view: UIView, toView: UIView) {
         var constraints = [NSLayoutConstraint]()
         constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
-        Anchor.anchorsExceptAnchor(anchor).filter { $0 != noAnchor }.forEach {
+        Anchor.anchorsExcept(anchor).filter { $0 != noAnchor }.forEach {
             constraints.append(constraintWithAnchor($0, fromView: view, toView: toView))
         }
         constraints.append(view.heightAnchor.constraintEqualToConstant(height))
@@ -172,7 +172,6 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         super.layoutSubviews()
         updateViewStyle()
         updateSeparatorViewInset()
-        //print("spearator -> \(self.separatorInset)\n   margin -> \(self.layoutMargins)")
     }
     
     //MARK: Help Method
