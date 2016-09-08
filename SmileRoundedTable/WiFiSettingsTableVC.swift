@@ -61,10 +61,9 @@ class WiFiSettingsTableVC: UITableViewController {
             cell.selectedColor = UIColor.darkGrayColor()
             cell.cornerRadius = 22
         case .SwitchCell(_):
-            cell.selectionStyle = .None
+            cell.canSelected = false
             cell.separatorInset = UIEdgeInsetsMake(0, 50, 0, 50)
         default:
-            //cell.margin = 40
             break
         }
     }

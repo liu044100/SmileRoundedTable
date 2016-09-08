@@ -8,7 +8,7 @@
 import UIKit
 
 
-///This class imitate the default separator & selectionStyle
+///This class imitate the default separator & selectionStyle, the tableViewCell handle the style of self
 @IBDesignable
 public class SmileRoundedTableViewCell: UITableViewCell {
 
@@ -43,7 +43,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     
     //MARK: Setter
     override public var frame: CGRect {
-        didSet(newFrame){
+        didSet {
             super.frame.origin.x += margin
             guard let tableview = tableview() else { return }
             //only change frame when cell frame == talbe view frame
@@ -53,12 +53,7 @@ public class SmileRoundedTableViewCell: UITableViewCell {
     }
     
     //MARK: Selected
-    private var isSelected: Bool = true
-    override public var selectionStyle: UITableViewCellSelectionStyle {
-        didSet {
-            isSelected = !(oldValue == .None)
-        }
-    }
+    public var canSelected: Bool = true
     
     public override func setHighlighted(highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
@@ -93,9 +88,6 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         self.backgroundColor        = UIColor.clearColor()
         contentView.backgroundColor = UIColor.clearColor()
         
-        self.contentColor = UIColor.whiteColor()
-        
-        
         //corner radius
         roundedView.layer.cornerRadius = cornerRadius
 
@@ -119,15 +111,15 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         
         //autoresize
         roundedView.autoresizingMask   = [.FlexibleWidth, .FlexibleHeight]
-        separatorView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        separatorView.autoresizingMask = [.FlexibleWidth, .FlexibleLeftMargin, .FlexibleRightMargin]
         topCornerCoverView.autoresizingMask    = [.FlexibleTopMargin, .FlexibleWidth, .FlexibleHeight]
         bottomCornerCoverView.autoresizingMask = [.FlexibleBottomMargin, .FlexibleWidth, .FlexibleHeight]
     }
 
-    
     public override func layoutSubviews() {
         super.layoutSubviews()
         updateCorner()
+        updateSeparator()
     }
     
     //MARK: Help Method
@@ -157,8 +149,16 @@ public class SmileRoundedTableViewCell: UITableViewCell {
         }
     }
     
+    private func updateSeparator() {
+        let leftInset  = self.separatorInset.left
+        
+        let previousOrigin = separatorView.frame.origin
+        
+        separatorView.frame.origin = CGPoint(x: leftInset, y: previousOrigin.y)
+    }
+    
     private func handleSelected(highlighted: Bool, animated: Bool) {
-        guard self.isSelected else { return }
+        guard self.canSelected else { return }
         
         let color = highlighted ? selectedColor : contentColor
         
