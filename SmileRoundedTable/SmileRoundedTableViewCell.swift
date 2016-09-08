@@ -7,248 +7,168 @@
 
 import UIKit
 
-private struct ConstraintHelper {
-    enum Anchor: Int {
-        case Top
-        case Left
-        case Right
-        case Bottom
-        case Count
-        
-        static var all: [Anchor] {
-            let result = (0..<Anchor.Count.rawValue).map { Anchor(rawValue: $0)! }
-            return result
-        }
-        
-        static func anchorsExcept(anchor: Anchor) -> [Anchor] {
-            let result = all.filter { $0.rawValue != anchor.rawValue }
-            return result
-        }
-    }
-    
-    static func constraintWithAnchor(anchor: Anchor, constant: CGFloat = 0, fromView view: UIView, toView: UIView) -> NSLayoutConstraint {
-        let constraint: NSLayoutConstraint
-        switch anchor {
-        case .Top:
-            constraint = toView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: -constant)
-        case .Left:
-            constraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor, constant: -constant)
-        case .Right:
-            constraint = toView.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: constant)
-        case .Bottom:
-            constraint = toView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant: constant)
-        case .Count:
-            constraint = toView.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
-        }
-        return constraint
-    }
-    
-    static func adjoin(exceptAnchor anchor: Anchor = .Top, hasConstant constant: CGFloat = 0, fromView view: UIView, toView: UIView) {
-        var constraints = [NSLayoutConstraint]()
-        constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
-        Anchor.anchorsExcept(anchor).forEach {
-            constraints.append(constraintWithAnchor($0, fromView: view, toView: toView))
-        }
-        NSLayoutConstraint.activateConstraints(constraints)
-    }
-    
-    static func adjoin(exceptAnchor anchor: Anchor, hasConstant constant: CGFloat, noAnchor: Anchor, withHeight height: CGFloat, fromView view: UIView, toView: UIView) {
-        var constraints = [NSLayoutConstraint]()
-        constraints.append(constraintWithAnchor(anchor, constant: constant, fromView: view, toView: toView))
-        Anchor.anchorsExcept(anchor).filter { $0 != noAnchor }.forEach {
-            constraints.append(constraintWithAnchor($0, fromView: view, toView: toView))
-        }
-        constraints.append(view.heightAnchor.constraintEqualToConstant(height))
-        NSLayoutConstraint.activateConstraints(constraints)
-    }
-}
 
+///This class imitate the default separator & selectionStyle
+@IBDesignable
 public class SmileRoundedTableViewCell: UITableViewCell {
 
-    //MARK: Property Public
-    public var margin: CGFloat = 28
-    public var cornerRadius: CGFloat = 6
-    public var frontColor = UIColor.whiteColor() {
-        didSet(newValue) {
-            self.contentViews.forEach {
-                $0.backgroundColor = newValue
-            }
-        }
-    }
-    public var separatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1) {
-        didSet(newValue) {
-            self.separatorView.backgroundColor = newValue
-        }
-    }
-    public var selectionColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
-    override public var selectionStyle: UITableViewCellSelectionStyle {
-        didSet(newValue) {
-            needSelected = !(newValue.rawValue == 0)
+    //MARK: IBInspectable Public Property
+    @IBInspectable public var margin: CGFloat = 28
+    @IBInspectable public var cornerRadius: CGFloat = 6
+    
+    @IBInspectable public var selectedColor: UIColor = UIColor(red: 217/255, green: 217/255, blue: 217/255, alpha: 1)
+    @IBInspectable public var contentColor: UIColor = UIColor.whiteColor() {
+        didSet {
+            self.contentViews.forEach { $0.backgroundColor = contentColor }
         }
     }
     
     //MARK: Constant
-    private let separatorLeftInset: CGFloat = 16
+    private let defaultSeparatorColor = UIColor(red: 206/255, green: 206/255, blue: 210/255, alpha: 1)
     
-    //MARK: Property Private
-    private let roundView = UIView()
-    private let topView = UIView()
-    private let bottomView = UIView()
+    //MARK: Private Property
+    ///the view cover top corner of contentView
+    private let topCornerCoverView = UIView()
+    
+    ///the view cover bottom corner of contentView
+    private let bottomCornerCoverView = UIView()
+    
+    private let roundedView = UIView()
+    
     private let separatorView = UIView()
+    
     private var contentViews: [UIView] {
-        return [roundView, topView, bottomView]
+        return [roundedView, topCornerCoverView, bottomCornerCoverView]
     }
-    private var needSelected: Bool = true
     
     //MARK: Setter
     override public var frame: CGRect {
         didSet(newFrame){
             super.frame.origin.x += margin
-            guard let tableview = getTableview() else { return }
+            guard let tableview = tableview() else { return }
             //only change frame when cell frame == talbe view frame
             guard tableview.frame.width == super.frame.size.width else { return }
             super.frame.size.width -= 2 * margin
         }
     }
     
-    public override func setHighlighted(highlighted: Bool, animated: Bool) {
-        super.setHighlighted(highlighted, animated: animated)
-        handleColor(highlighted, animated: animated)
-    }
-
-    public override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        handleColor(selected, animated: animated)
+    //MARK: Selected
+    private var isSelected: Bool = true
+    override public var selectionStyle: UITableViewCellSelectionStyle {
+        didSet {
+            isSelected = !(oldValue == .None)
+        }
     }
     
+    public override func setHighlighted(highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        handleSelected(highlighted, animated: animated)
+    }
+    
+    public override func setSelected(selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        handleSelected(selected, animated: animated)
+    }
 
     //MARK: Life Cycle
     public override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard let tableView = getTableview() else {
-            return
-        }
-        //Because have made new separator view, so set tableView separatorStyle to None
+        
+        guard let tableView = tableview() else { return }
+        
+        self.separatorView.backgroundColor = tableView.separatorColor ?? defaultSeparatorColor
+        
+        //Because this class create a new separator view to imitate the default separator, so set tableView separatorStyle to None
         tableView.separatorStyle = .None
+        
+        //Because this class imitate the default selection, so disable default selectionStyle
+        self.selectionStyle = .None
     }
     
     override public func awakeFromNib() {
         super.awakeFromNib()
         
-        roundView.backgroundColor = frontColor
-        topView.backgroundColor = frontColor
-        bottomView.backgroundColor = frontColor
+        //color
+        self.selectedBackgroundView = nil
+        self.backgroundColor        = UIColor.clearColor()
+        contentView.backgroundColor = UIColor.clearColor()
         
-        roundView.layer.cornerRadius = cornerRadius
+        self.contentColor = UIColor.whiteColor()
         
-        self.insertSubview(roundView, belowSubview: self.contentView)
-        self.insertSubview(topView, belowSubview: self.roundView)
-        self.insertSubview(bottomView, belowSubview: self.contentView)
         
-        self.contentView.backgroundColor = UIColor.clearColor()
-        self.backgroundColor = UIColor.clearColor()
+        //corner radius
+        roundedView.layer.cornerRadius = cornerRadius
+
+        //add subview
+        self.insertSubview(roundedView, belowSubview: contentView)
+        self.insertSubview(topCornerCoverView, belowSubview: roundedView)
+        self.insertSubview(bottomCornerCoverView, belowSubview: contentView)
+        bottomCornerCoverView.addSubview(separatorView)
         
-        roundView.translatesAutoresizingMaskIntoConstraints = false
-        topView.translatesAutoresizingMaskIntoConstraints = false
-        bottomView.translatesAutoresizingMaskIntoConstraints = false
+        //set frame
+        let width  = self.bounds.size.width
+        let height = self.bounds.size.height
+        let origin = self.bounds.origin
+        let coverViewSize = CGSize(width: width, height: height - cornerRadius)
+        let separatorHeight: CGFloat = 0.5
         
-        ConstraintHelper.adjoin(fromView: roundView, toView: self)
-        ConstraintHelper.adjoin(exceptAnchor: .Bottom, hasConstant: cornerRadius, fromView: topView, toView: self)
-        ConstraintHelper.adjoin(exceptAnchor: .Top, hasConstant: cornerRadius, fromView: bottomView, toView: self)
+        roundedView.frame   = self.bounds
+        separatorView.frame = CGRect(origin: CGPoint(x: 0, y: coverViewSize.height - separatorHeight), size: CGSize(width: width, height: separatorHeight))
+        topCornerCoverView.frame    = CGRect(origin: origin, size: coverViewSize)
+        bottomCornerCoverView.frame = CGRect(origin: CGPoint(x: origin.x, y: origin.y + cornerRadius), size: coverViewSize)
         
-        //***separator
-        separatorView.backgroundColor = separatorColor
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        
-        bottomView.addSubview(separatorView)
-        ConstraintHelper.adjoin(exceptAnchor: .Left, hasConstant: separatorLeftInset, noAnchor: .Top, withHeight: 0.5, fromView: separatorView, toView: bottomView)
-        
-        //Because use new roundView & topView & bottomView for selection, so disable default selectionStyle
-        self.selectionStyle = .None
+        //autoresize
+        roundedView.autoresizingMask   = [.FlexibleWidth, .FlexibleHeight]
+        separatorView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        topCornerCoverView.autoresizingMask    = [.FlexibleTopMargin, .FlexibleWidth, .FlexibleHeight]
+        bottomCornerCoverView.autoresizingMask = [.FlexibleBottomMargin, .FlexibleWidth, .FlexibleHeight]
     }
 
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        updateViewStyle()
-        updateSeparatorViewInset()
+        updateCorner()
     }
     
     //MARK: Help Method
-    private func getTableview() -> UITableView? {
+    private func tableview() -> UITableView? {
         guard let view = superview as? UITableView else {
             return superview?.superview as? UITableView
         }
         return view
     }
     
-    private func updateViewStyle() {
+    private func updateCorner() {
         //update cell round corner style
-        guard let tableView = getTableview(),
-            let indexPath = tableView.indexPathForRowAtPoint(self.center) else { return }
+        guard let tableView = tableview(), indexPath = tableView.indexPathForRowAtPoint(self.center) else { return }
+        
         if indexPath.row == 0 && tableView.numberOfRowsInSection(indexPath.section) == 1 {
-            self.topView.hidden = true
-            self.bottomView.hidden = true
+            self.topCornerCoverView.hidden    = true
+            self.bottomCornerCoverView.hidden = true
         } else if indexPath.row == 0 {
-            self.topView.hidden = true
-            self.bottomView.hidden = false
+            self.topCornerCoverView.hidden    = true
+            self.bottomCornerCoverView.hidden = false
         } else if indexPath.row == tableView.numberOfRowsInSection(indexPath.section) - 1 {
-            self.topView.hidden = false
-            self.bottomView.hidden = true
+            self.topCornerCoverView.hidden    = false
+            self.bottomCornerCoverView.hidden = true
         } else {
-            self.topView.hidden = false
-            self.bottomView.hidden = false
-        }
-        //update corner radius
-        if roundView.layer.cornerRadius != cornerRadius {
-            roundView.layer.cornerRadius = cornerRadius
+            self.topCornerCoverView.hidden    = false
+            self.bottomCornerCoverView.hidden = false
         }
     }
     
-    ///Help Method For Cell Selection Color
-    private func handleColor(highlighted: Bool, animated: Bool) {
-        guard self.needSelected else {
-            return
-        }
-        let color = currentColor(highlighted)
-        changeViewsColor(self.contentViews, color: color, animated: animated)
-    }
-    
-    private func changeViewsColor(views: [UIView], color: UIColor, animated: Bool) {
-        let handle: [UIView] -> Void = { views in views.forEach { $0.backgroundColor = color } }
+    private func handleSelected(highlighted: Bool, animated: Bool) {
+        guard self.isSelected else { return }
+        
+        let color = highlighted ? selectedColor : contentColor
+        
         guard animated else {
-            handle(views)
+            self.contentViews.forEach { $0.backgroundColor = color }
             return
         }
+        
         UIView.animateWithDuration(0.6) { () -> Void in
-            handle(views)
+            self.contentViews.forEach { $0.backgroundColor = color }
         }
     }
-    
-    private func currentColor(highlighted: Bool) -> UIColor {
-        guard highlighted else {
-            return frontColor
-        }
-        return selectionColor
-    }
-    
-    ///update separator view constraint
-    private func updateSeparatorViewInset() {
-        for x in self.bottomView.constraints {
-            var constant: CGFloat
-            switch x.firstAttribute {
-            case .Left:
-                constant = -self.separatorInset.left
-            case .Right:
-                constant = self.separatorInset.right
-            default:
-                continue
-            }
-            guard x.constant != constant else {
-                continue
-            }
-            x.constant = constant
-        }
-    }
-    
 }

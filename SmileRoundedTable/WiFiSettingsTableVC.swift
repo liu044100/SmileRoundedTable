@@ -50,7 +50,7 @@ class WiFiSettingsTableVC: UITableViewController {
         case .SwitchCell(let text):
             cell.textLabel?.text = text
         }
-        //testAPI(cell, indexPath: indexPath)
+        testAPI(cell, indexPath: indexPath)
         return cell
     }
     
@@ -58,11 +58,10 @@ class WiFiSettingsTableVC: UITableViewController {
         let type = dataSource[indexPath.section][indexPath.row]
         switch type {
         case .ButtonCell(_):
-            cell.selectionColor = UIColor.darkGrayColor()
+            cell.selectedColor = UIColor.darkGrayColor()
             cell.cornerRadius = 22
         case .SwitchCell(_):
             cell.selectionStyle = .None
-            cell.separatorColor = UIColor.greenColor()
             cell.separatorInset = UIEdgeInsetsMake(0, 50, 0, 50)
         default:
             //cell.margin = 40
